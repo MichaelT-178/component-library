@@ -50,7 +50,7 @@ os.system('npx rollup -c')
 
 os.system('git add .')
 
-print(c('✅ git add completed successfully', 'green'))
+print(c('\n\n✅ git add completed successfully', 'green'))
 
 
 message = input(c("\nWhat's your commit message? : ", 'cyan'))

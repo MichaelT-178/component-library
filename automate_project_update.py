@@ -4,8 +4,10 @@ from termcolor import colored as c
 
 os.system("clear")
 
-# MODIFY THE PATH HERE AS NECESSARY
-path_to_local_project = "../main-project"
+# MODIFY THE PATHS HERE AS NECESSARY
+paths_to_local_projects = [
+    "../main-project"
+]
 
 async def count_to_seventy(stop_event: asyncio.Event):
     i = 1
@@ -21,32 +23,35 @@ async def count_to_seventy(stop_event: asyncio.Event):
         if i > 100:  # Prevent it from counting indefinitely
             break
 
-async def run_npm_install():
+async def run_npm_install(path_to_project):
+    print(c(f"\nUpdating project at {path_to_project}", "cyan"))
 
-    print(c("Updates successfully pushed to Github. Now updating your prismjs library in your project.", "cyan"))
-    os.chdir(path=path_to_local_project)
+    os.chdir(path=path_to_project)
+    print(c("Deleting outdated prismjs library...", "yellow"))
     os.system("rm -rf node_modules/prismjs")
 
-    print(c('\nSuccessfully deleted the outdated prismjs library in your project!', 'green'))
-    print(c('\nDownloading new prismjs library in your project. This will take about 20 seconds...', 'blue'))
-    
-    # rm -rf node_modules/prismjs
-    # npm install git+https://github.com/username/vue-component-library.git
+    print(c('Successfully deleted the outdated prismjs library!', 'green'))
+    print(c('Downloading new prismjs library. This will take about 20 seconds...', 'blue'))
+
     process = await asyncio.create_subprocess_exec(
         "npm", "install", "git+https://github.com/MichaelT-178/component-library.git",
         stdout=asyncio.subprocess.DEVNULL,
         stderr=asyncio.subprocess.DEVNULL
     )
-    
+
     await process.wait()
-    print(c('\n\nSuccessfully updated your "prismjs" library in your project!\n', 'green'))
+    print(c('\nSuccessfully updated the "prismjs" library in the project!\n', 'green'))
 
 async def main():
     stop_event = asyncio.Event()
 
     counting_task = asyncio.create_task(count_to_seventy(stop_event))
 
-    await run_npm_install()
+    for path in paths_to_local_projects:
+        try:
+            await run_npm_install(path)
+        except Exception as e:
+            print(c(f"Error updating project at {path}: {str(e)}", "red"))
 
     stop_event.set()
     await counting_task

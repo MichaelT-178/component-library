@@ -1,11 +1,10 @@
 <template>
-	<p class="test-header">Component Library Testing</p>
-	<router-view />
+  <Counter></Counter>
 </template>
 
 
 <script setup>
-
+import Counter from './components/Counter.vue';
 </script>
 
 
